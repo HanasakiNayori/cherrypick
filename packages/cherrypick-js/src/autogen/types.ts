@@ -544,6 +544,26 @@ export type paths = {
      */
     post: operations['admin___invite___revoke'];
   };
+  '/admin/root/add': {
+    /**
+     * admin/root/add
+     * @description No description provided.
+     *
+     * **Internal Endpoint**: This endpoint is an API for the cherrypick mainframe and is not intended for use by third parties.
+     * **Credential required**: *Yes* / **Permission**: *write:admin:root*
+     */
+    post: operations['admin___root___add'];
+  };
+  '/admin/root/remove': {
+    /**
+     * admin/root/remove
+     * @description No description provided.
+     *
+     * **Internal Endpoint**: This endpoint is an API for the cherrypick mainframe and is not intended for use by third parties.
+     * **Credential required**: *Yes* / **Permission**: *write:admin:root*
+     */
+    post: operations['admin___root___remove'];
+  };
   '/admin/promo/create': {
     /**
      * admin/promo/create
@@ -4024,6 +4044,8 @@ export type components = {
       isSilenced: boolean;
       /** @example false */
       isSuspended: boolean;
+      /** @example false */
+      isRoot: boolean;
       /** @example Hi masters, I am Ai! */
       description: string | null;
       location: string | null;
@@ -4826,7 +4848,7 @@ export type components = {
       /** @enum {string} */
       type: 'section';
       title: string;
-      children: components['schemas']['PageBlock'][];
+      children: Record<string, never>[];
     }, {
       id: string;
       /** @enum {string} */
@@ -8887,6 +8909,112 @@ export type operations = {
     };
   };
   /**
+   * admin/root/add
+   * @description No description provided.
+   *
+   * **Internal Endpoint**: This endpoint is an API for the cherrypick mainframe and is not intended for use by third parties.
+   * **Credential required**: *Yes* / **Permission**: *write:admin:root*
+   */
+  admin___root___add: {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          userId: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (without any results) */
+      204: {
+        content: never;
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
+   * admin/root/remove
+   * @description No description provided.
+   *
+   * **Internal Endpoint**: This endpoint is an API for the cherrypick mainframe and is not intended for use by third parties.
+   * **Credential required**: *Yes* / **Permission**: *write:admin:root*
+   */
+  admin___root___remove: {
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: misskey:id */
+          userId: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK (without any results) */
+      204: {
+        content: never;
+      };
+      /** @description Client error */
+      400: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Authentication error */
+      401: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Forbidden error */
+      403: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description I'm Ai */
+      418: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        content: {
+          'application/json': components['schemas']['Error'];
+        };
+      };
+    };
+  };
+  /**
    * admin/promo/create
    * @description No description provided.
    *
@@ -9890,7 +10018,7 @@ export type operations = {
            * @default all
            * @enum {string}
            */
-          state?: 'all' | 'alive' | 'available' | 'admin' | 'moderator' | 'adminOrModerator' | 'suspended';
+          state?: 'all' | 'alive' | 'available' | 'admin' | 'moderator' | 'adminOrModerator' | 'root' | 'suspended';
           /**
            * @default combined
            * @enum {string}

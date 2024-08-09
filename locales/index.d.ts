@@ -943,6 +943,14 @@ export interface Locale extends ILocale {
      */
     "unsuspendConfirm": string;
     /**
+     * Rootアカウントにしますか？
+     */
+    "rootConfirm": string;
+    /**
+     * Rootアカウントを解除しますか？
+     */
+    "unrootConfirm": string;
+    /**
      * リストを選択
      */
     "selectList": string;

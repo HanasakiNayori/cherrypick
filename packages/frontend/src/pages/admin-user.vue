@@ -17,7 +17,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<span class="state">
 							<span v-if="suspended" class="suspended">Suspended</span>
 							<span v-if="silenced" class="silenced">Silenced</span>
-							<span v-if="moderator" class="moderator">Moderator</span>
+							<span v-if="moderator && !root" class="moderator">Moderator</span>
+							<span v-if="root" class="suspended">Root User</span>
 						</span>
 					</div>
 				</div>
@@ -91,8 +92,17 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 				<FormSection>
 					<div class="_gaps">
-						<MkSwitch v-model="suspended" @update:modelValue="toggleSuspend">{{ i18n.ts.suspend }}</MkSwitch>
-
+						<MkFolder v-if="user.host == null && $i?.isAdmin && (root || !user.isAdmin)" >
+							<template #icon><i class="ti ti-alert-triangle"></i></template>
+							<template #label>{{ "Warning!" }}</template>
+							<MkSwitch v-model="suspended" @update:modelValue="toggleSuspend">{{ i18n.ts.suspend }}
+								<template #caption>{{ "凍結は削除リクエストが発生します。うまく解凍されない場合があります。余程のことが無い限りは押さないでください！" }}</template>
+							</MkSwitch>				
+							<MkSwitch v-if="user.host == null && $i?.isAdmin && (root || !user.isAdmin)" v-model="root" class="_formBlock" @update:modelValue="toggleRoot">
+								{{ "isRoot?" }}
+								<template #caption>{{ "isRootの切替ができます。余程のことが無い限りは外さないでください！" }}</template>
+							</MkSwitch>
+						</MkFolder>
 						<div>
 							<MkButton v-if="user.host == null" inline style="margin-right: 8px;" @click="resetPassword"><i class="ti ti-key"></i> {{ i18n.ts.resetPassword }}</MkButton>
 						</div>
@@ -244,6 +254,7 @@ const ap = ref<any>(null);
 const moderator = ref(false);
 const silenced = ref(false);
 const suspended = ref(false);
+const root = ref(false);
 const moderationNote = ref('');
 const filesPagination = {
 	endpoint: 'admin/drive/files' as const,
@@ -275,6 +286,7 @@ function createFetcher() {
 		moderator.value = info.value.isModerator;
 		silenced.value = info.value.isSilenced;
 		suspended.value = info.value.isSuspended;
+		root.value = info.value.isRoot;
 		moderationNote.value = info.value.moderationNote;
 
 		watch(moderationNote, async () => {
@@ -459,6 +471,19 @@ function toggleRoleItem(role) {
 		expandedRoles.value = expandedRoles.value.filter(x => x !== role.id);
 	} else {
 		expandedRoles.value.push(role.id);
+	}
+}
+
+async function toggleRoot(v) {
+	const confirm = await os.confirm({
+		type: 'warning',
+		text: v ? i18n.ts.rootConfirm : i18n.ts.unrootConfirm,
+	});
+	if (confirm.canceled) {
+		root.value = !v;
+	} else {
+		await misskeyApi(v ? 'admin/root/add' : 'admin/root/remove', { userId: user.value.id });
+		refreshUser();
 	}
 }
 
