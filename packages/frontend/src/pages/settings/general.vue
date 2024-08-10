@@ -56,6 +56,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</MkSwitch>
 				<MkSwitch v-model="collapseDefault">{{ i18n.ts.collapseDefault }} <span class="_beta">CherryPick</span></MkSwitch>
 				<MkSwitch v-model="showNoteActionsOnlyHover">{{ i18n.ts.showNoteActionsOnlyHover }}</MkSwitch>
+				<MkSwitch v-model="showFavoriteButtonInNoteFooter">{{ i18n.ts.showFavoriteButtonInNoteFooter }} <span :class="$style.noya">Noyaskey</span></MkSwitch>
 				<MkSwitch v-model="showClipButtonInNoteFooter">{{ i18n.ts.showClipButtonInNoteFooter }}</MkSwitch>
 				<MkSwitch v-model="showTranslateButtonInNote">{{ i18n.ts.showTranslateButtonInNote }} <span class="_beta">CherryPick</span></MkSwitch>
 				<MkSwitch v-model="advancedMfm">{{ i18n.ts.enableAdvancedMfm }}</MkSwitch>
@@ -411,6 +412,7 @@ const hemisphere = computed(defaultStore.makeGetterSetter('hemisphere'));
 const overridedDeviceKind = computed(defaultStore.makeGetterSetter('overridedDeviceKind'));
 const serverDisconnectedBehavior = computed(defaultStore.makeGetterSetter('serverDisconnectedBehavior'));
 const showNoteActionsOnlyHover = computed(defaultStore.makeGetterSetter('showNoteActionsOnlyHover'));
+const showFavoriteButtonInNoteFooter = computed(defaultStore.makeGetterSetter('showFavoriteButtonInNoteFooter'));
 const showClipButtonInNoteFooter = computed(defaultStore.makeGetterSetter('showClipButtonInNoteFooter'));
 const reactionsDisplaySize = computed(defaultStore.makeGetterSetter('reactionsDisplaySize'));
 const limitWidthOfReaction = computed(defaultStore.makeGetterSetter('limitWidthOfReaction'));
@@ -531,6 +533,7 @@ watch([
 	collapseDefault,
 	hideAvatarsInNote,
 	showNoteActionsOnlyHover,
+	showFavoriteButtonInNoteFooter,
 	showClipButtonInNoteFooter,
 	instanceTicker,
 	mediaListWithOneImageAppearance,
@@ -690,6 +693,16 @@ definePageMetadata(() => ({
 	font-size: 0.85em;
 	padding: 0 0 8px 0;
 	user-select: none;
+}
+
+.noya {
+	margin-left: 0.7em;
+	font-size: 65%;
+	padding: 2px 3px;
+	color: var(--success);
+	border: solid 1px var(--success);
+	border-radius: 4px;
+	vertical-align: top;
 }
 
 .mfmPreview, .fontSize {

@@ -97,6 +97,7 @@ const defaultStoreSaveKeys: (keyof typeof defaultStore['state'])[] = [
 	'showAvatarDecorations',
 	'numberOfPageCache',
 	'showNoteActionsOnlyHover',
+	'showFavoriteButtonInNoteFooter',
 	'showClipButtonInNoteFooter',
 	'reactionsDisplaySize',
 	'forceShowAds',

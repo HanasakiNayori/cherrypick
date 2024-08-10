@@ -88,9 +88,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<button v-else :class="$style.footerButton" class="_button" disabled>
 				<i class="ti ti-ban"></i>
 			</button>
+			<button v-if="canRenote && defaultStore.state.renoteQuoteButtonSeparation" ref="quoteButton" v-vibrate="defaultStore.state.vibrateSystem ? 5 : []" v-tooltip="i18n.ts.quote" class="_button" :class="$style.footerButton" @click.stop="quote()">
+				<i class="ti ti-quote"></i>
+			</button>
+			<!--
 			<button v-if="note.reactionAcceptance !== 'likeOnly' && note.myReaction == null" ref="heartReactButton" v-vibrate="defaultStore.state.vibrateSystem ? [30, 50, 50] : []" v-tooltip="i18n.ts.like" :class="$style.footerButton" class="_button" @click.stop="heartReact()">
 				<i class="ti ti-heart"></i>
 			</button>
+			-->
 			<button ref="reactButton" v-vibrate="defaultStore.state.vibrateSystem ? [30, 50, 50] : []" :class="$style.footerButton" class="_button" @click.stop="toggleReact()">
 				<i v-if="note.reactionAcceptance === 'likeOnly' && note.myReaction != null" class="ti ti-heart-filled" style="color: var(--eventReactionHeart);"></i>
 				<i v-else-if="note.myReaction != null" class="ti ti-mood-edit" style="color: var(--accent);"></i>
@@ -98,8 +103,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<i v-else class="ti ti-mood-plus"></i>
 				<p v-if="(note.reactionAcceptance === 'likeOnly' || defaultStore.state.showReactionsCount) && note.reactionCount > 0" :class="$style.footerButtonCount">{{ number(note.reactionCount) }}</p>
 			</button>
-			<button v-if="canRenote && defaultStore.state.renoteQuoteButtonSeparation" ref="quoteButton" v-vibrate="defaultStore.state.vibrateSystem ? 5 : []" v-tooltip="i18n.ts.quote" class="_button" :class="$style.footerButton" @click.stop="quote()">
-				<i class="ti ti-quote"></i>
+			<button v-if="defaultStore.state.showFavoriteButtonInNoteFooter" v-vibrate="defaultStore.state.vibrateSystem ? 5 : []" v-tooltip="i18n.ts.favorite" :class="$style.footerButton" class="_button" @click.stop="toggleFavorite()">
+				<i v-if="!isFavorited" class="ti ti-bookmark-plus"></i>
+				<i v-else class="ti ti-bookmark-minus"></i>
 			</button>
 			<button v-if="defaultStore.state.showClipButtonInNoteFooter" ref="clipButton" v-vibrate="defaultStore.state.vibrateSystem ? 5 : []" v-tooltip="i18n.ts.clip" :class="$style.footerButton" class="_button" @click.stop="clip()">
 				<i class="ti ti-paperclip"></i>
@@ -116,7 +122,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, provide, Ref, ref, shallowRef, watch } from 'vue';
+import { computed, inject, provide, onMounted, Ref, ref, shallowRef, watch } from 'vue';
 import * as mfm from 'cherrypick-mfm-js';
 import * as Misskey from 'cherrypick-js';
 import * as os from '@/os.js';
@@ -359,6 +365,57 @@ async function toggleReaction(reaction) {
 	if (note.value.text && note.value.text.length > 100 && (Date.now() - new Date(note.value.createdAt).getTime() < 1000 * 3)) {
 		claimAchievement('reactWithoutRead');
 	}
+}
+
+let isFavorited = ref(false);
+onMounted(async () => {
+	if ($i) {
+		const response = await misskeyApi('notes/state', {
+			noteId: note.value.id,
+		});
+		if (response) {
+			isFavorited.value = response.isFavorited;
+		}
+	} else {
+		isFavorited.value = false;
+	}
+});
+
+async function getIsFavorited(): Promise<boolean> {
+	if ($i) {
+		const response = await misskeyApi('notes/state', {
+			noteId: note.value.id,
+		});
+		if (response) {
+			return response.isFavorited;
+		}
+	} else {
+		return false;
+	}
+	return true;
+}
+
+async function toggleFavorite(): Promise<boolean> {
+	const state = await getIsFavorited();
+	isFavorited.value = state;
+	const action = state ? '解除' : '登録';
+	const apiEndpoint = state ? 'notes/favorites/delete' : 'notes/favorites/create';
+	const newState = !state;
+
+	pleaseLogin();
+	const { canceled } = await os.confirm({
+		type: 'question',
+		text: `お気に入りを${action}しますか？`
+	});
+	if (canceled) {
+		return isFavorited.value;
+	}
+
+	await os.apiWithDialog(apiEndpoint, {
+		noteId: note.value.id,
+	});
+	isFavorited.value = newState;
+	return isFavorited.value;
 }
 
 function heartReact(): void {

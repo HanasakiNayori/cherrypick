@@ -4768,6 +4768,10 @@ export interface Locale extends ILocale {
      */
     "showClipButtonInNoteFooter": string;
     /**
+     * ノートのアクションにお気に入りを追加
+     */
+    "showFavoriteButtonInNoteFooter": string;
+    /**
      * リアクションの表示サイズ
      */
     "reactionsDisplaySize": string;

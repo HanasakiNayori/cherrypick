@@ -170,9 +170,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<button v-else class="_button" :class="$style.noteFooterButton" disabled>
 				<i class="ti ti-ban"></i>
 			</button>
-			<button v-if="appearNote.reactionAcceptance !== 'likeOnly' && appearNote.myReaction == null" ref="heartReactButton" v-vibrate="defaultStore.state.vibrateSystem ? [30, 50, 50] : []" v-tooltip="i18n.ts.like" :class="$style.noteFooterButton" class="_button" @click="heartReact()">
+			<button v-if="canRenote && defaultStore.state.renoteQuoteButtonSeparation" ref="quoteButton" v-vibrate="defaultStore.state.vibrateSystem ? 5 : []" v-tooltip="i18n.ts.quote" class="_button" :class="$style.noteFooterButton" @click="quote()">
+				<i class="ti ti-quote"></i>
+			</button>
+			<!--
+			<button v-if="appearNote.reactionAcceptance !== 'likeOnly' && appearNote.myReaction == null" ref="heartReactButton" v-vibrate="defaultStore.state.vibrateSystem ? [30, 50, 50] : []" v-tooltip="i18n.ts.like" :class="$style.footerButton" class="_button" @click.stop="heartReact()">
 				<i class="ti ti-heart"></i>
 			</button>
+			-->
 			<button ref="reactButton" v-vibrate="defaultStore.state.vibrateSystem ? [30, 50, 50] : []" :class="$style.noteFooterButton" class="_button" @click.stop="toggleReact()">
 				<i v-if="appearNote.reactionAcceptance === 'likeOnly' && appearNote.myReaction != null" class="ti ti-heart-filled" style="color: var(--eventReactionHeart);"></i>
 				<i v-else-if="appearNote.myReaction != null" class="ti ti-mood-edit" style="color: var(--accent);"></i>
@@ -180,8 +185,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<i v-else class="ti ti-mood-plus"></i>
 				<p v-if="(appearNote.reactionAcceptance === 'likeOnly' || defaultStore.state.showReactionsCount) && appearNote.reactionCount > 0" :class="$style.noteFooterButtonCount">{{ number(appearNote.reactionCount) }}</p>
 			</button>
-			<button v-if="canRenote && defaultStore.state.renoteQuoteButtonSeparation" ref="quoteButton" v-vibrate="defaultStore.state.vibrateSystem ? 5 : []" v-tooltip="i18n.ts.quote" class="_button" :class="$style.noteFooterButton" @click="quote()">
-				<i class="ti ti-quote"></i>
+			<button v-if="defaultStore.state.showFavoriteButtonInNoteFooter" v-vibrate="defaultStore.state.vibrateSystem ? 5 : []" v-tooltip="i18n.ts.favorite" :class="$style.noteFooterButton" class="_button" @click.stop="toggleFavorite()">
+				<i v-if="!isFavorited" class="ti ti-bookmark-plus"></i>
+				<i v-else class="ti ti-bookmark-minus"></i>
 			</button>
 			<button v-if="defaultStore.state.showClipButtonInNoteFooter" ref="clipButton" v-vibrate="defaultStore.state.vibrateSystem ? 5 : []" v-tooltip="i18n.ts.clip" class="_button" :class="$style.noteFooterButton" @click="clip()">
 				<i class="ti ti-paperclip"></i>
@@ -375,6 +381,7 @@ const renoteTime = shallowRef<HTMLElement>();
 const reactButton = shallowRef<HTMLElement>();
 const heartReactButton = shallowRef<HTMLElement>();
 const quoteButton = shallowRef<HTMLElement>();
+const favoriteButton = shallowRef<HTMLElement>();
 const clipButton = shallowRef<HTMLElement>();
 const appearNote = computed(() => isRenote ? note.value.renote as Misskey.entities.Note : note.value);
 const galleryEl = shallowRef<InstanceType<typeof MkMediaList>>();
@@ -642,6 +649,57 @@ function toggleReact() {
 	} else {
 		react();
 	}
+}
+
+let isFavorited = ref(false);
+onMounted(async () => {
+	if ($i) {
+		const response = await misskeyApi('notes/state', {
+			noteId: appearNote.value.id,
+		});
+		if (response) {
+			isFavorited.value = response.isFavorited;
+		}
+	} else {
+		isFavorited.value = false;
+	}
+});
+
+async function getIsFavorited(): Promise<boolean> {
+	if ($i) {
+		const response = await misskeyApi('notes/state', {
+			noteId: appearNote.value.id,
+		});
+		if (response) {
+			return response.isFavorited;
+		}
+	} else {
+		return false;
+	}
+	return true;
+}
+
+async function toggleFavorite(): Promise<boolean> {
+	const state = await getIsFavorited();
+	isFavorited.value = state;
+	const action = state ? '解除' : '登録';
+	const apiEndpoint = state ? 'notes/favorites/delete' : 'notes/favorites/create';
+	const newState = !state;
+
+	pleaseLogin();
+	const { canceled } = await os.confirm({
+		type: 'question',
+		text: `お気に入りを${action}しますか？`
+	});
+	if (canceled) {
+		return isFavorited.value;
+	}
+
+	await os.apiWithDialog(apiEndpoint, {
+		noteId: appearNote.value.id,
+	});
+	isFavorited.value = newState;
+	return isFavorited.value;
 }
 
 function onContextmenu(ev: MouseEvent): void {
