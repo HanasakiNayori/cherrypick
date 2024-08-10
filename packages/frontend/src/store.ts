@@ -727,6 +727,12 @@ export const defaultStore = markRaw(new Storage('base', {
 		default: false,
 	},
 
+	// - Settings/CherryPick/Noyaskey
+	flagAsNoNyaize: {
+		where: 'device',
+		default: false,
+	},
+
 	// - etc
 	friendlyEnableNotifications: {
 		where: 'device',

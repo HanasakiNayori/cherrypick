@@ -80,7 +80,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 						:parsedNodes="parsed"
 						:text="appearNote.text"
 						:author="appearNote.user"
-						:nyaize="noNyaize ? false : 'respect'"
+						:nyaize="defaultStore.state.flagAsNoNyaize ? false : noNyaize ? false : 'respect'"
 						:emojiUrls="appearNote.emojis"
 						:enableEmojiMenu="true"
 						:enableEmojiMenuReaction="true"

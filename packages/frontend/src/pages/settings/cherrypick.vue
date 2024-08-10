@@ -80,6 +80,17 @@ SPDX-License-Identifier: AGPL-3.0-only
 	</FormSection>
 
 	<FormSection>
+		<template #label><i class="ti ti-leaf"/> Noyaskey</template>
+		<template #description>{{ i18n.ts._cherrypick.patchDescription }}</template>
+		<div class="_gaps_m">
+			<MkSwitch v-model="flagAsNoNyaize">
+				<template #label>Nyaizeを無効化</template>
+				<template #caption>吾輩は猫ではない。</template>
+			</MkSwitch>
+		</div>
+	</FormSection>
+
+	<FormSection>
 		<template #label><i class="ti ti-flask"/> {{ i18n.ts.cherrypickLabs }}</template>
 		<template #description>{{ i18n.ts.cherrypickLabsDescription }}</template>
 		<div class="_gaps_m">
@@ -125,6 +136,7 @@ const friendlyEnableNotifications = computed(defaultStore.makeGetterSetter('frie
 const friendlyEnableWidgets = computed(defaultStore.makeGetterSetter('friendlyEnableWidgets'));
 const enableLongPressOpenAccountMenu = computed(defaultStore.makeGetterSetter('enableLongPressOpenAccountMenu'));
 const friendlyShowAvatarDecorationsInNavBtn = computed(defaultStore.makeGetterSetter('friendlyShowAvatarDecorationsInNavBtn'));
+const flagAsNoNyaize = computed(defaultStore.makeGetterSetter('flagAsNoNyaize'));
 
 watch([
 	renameTheButtonInPostFormToNya,
@@ -139,6 +151,7 @@ watch([
 	renameTheButtonInPostFormToNya,
 	friendlyEnableNotifications,
 	friendlyEnableWidgets,
+	flagAsNoNyaize,
 ], async () => {
 	await reloadAsk();
 });

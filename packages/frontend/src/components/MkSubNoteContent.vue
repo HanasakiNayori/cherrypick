@@ -14,7 +14,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			:parsedNodes="parsed"
 			:text="note.text"
 			:author="note.user"
-			:nyaize="noNyaize ? false : 'respect'"
+			:nyaize="defaultStore.state.flagAsNoNyaize ? false : noNyaize ? false : 'respect'"
 			:emojiUrls="note.emojis"
 			:enableEmojiMenu="true"
 			:enableEmojiMenuReaction="true"
