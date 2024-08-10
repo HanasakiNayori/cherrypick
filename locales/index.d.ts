@@ -4772,6 +4772,10 @@ export interface Locale extends ILocale {
      */
     "showFavoriteButtonInNoteFooter": string;
     /**
+     * ノートのアクションに♡リアクションを追加
+     */
+    "showHeartReactionButtonInNoteFooter": string;
+    /**
      * リアクションの表示サイズ
      */
     "reactionsDisplaySize": string;
@@ -7510,6 +7514,10 @@ export interface Locale extends ILocale {
              * パブリック投稿の許可
              */
             "canPublicNote": string;
+            /**
+             * リモート投稿の許可
+             */
+            "canRemoteNote": string;
             /**
              * ノートの編集
              */

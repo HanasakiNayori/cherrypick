@@ -337,6 +337,10 @@ export class NoteCreateService implements OnApplicationShutdown {
 			data.localOnly = true;
 		}
 
+		// ロールにてリモート投稿が不許可の場合、ローカルのみにする
+		if ((await this.roleService.getUserPolicies(user.id)).canRemoteNote === false) {
+			data.localOnly = true;
+		}
 		if (data.text) {
 			if (data.text.length > DB_MAX_NOTE_TEXT_LENGTH) {
 				data.text = data.text.slice(0, DB_MAX_NOTE_TEXT_LENGTH);
