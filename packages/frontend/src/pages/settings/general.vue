@@ -57,6 +57,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<MkSwitch v-model="collapseDefault">{{ i18n.ts.collapseDefault }} <span class="_beta">CherryPick</span></MkSwitch>
 				<MkSwitch v-model="showNoteActionsOnlyHover">{{ i18n.ts.showNoteActionsOnlyHover }}</MkSwitch>
 				<MkSwitch v-model="showFavoriteButtonInNoteFooter">{{ i18n.ts.showFavoriteButtonInNoteFooter }} <span :class="$style.noya">Noyaskey</span></MkSwitch>
+				<MkSwitch v-model="showHeartReactionButtonInNoteFooter">{{ i18n.ts.showHeartReactionButtonInNoteFooter }} <span :class="$style.noya">Noyaskey</span></MkSwitch>
 				<MkSwitch v-model="showClipButtonInNoteFooter">{{ i18n.ts.showClipButtonInNoteFooter }}</MkSwitch>
 				<MkSwitch v-model="showTranslateButtonInNote">{{ i18n.ts.showTranslateButtonInNote }} <span class="_beta">CherryPick</span></MkSwitch>
 				<MkSwitch v-model="advancedMfm">{{ i18n.ts.enableAdvancedMfm }}</MkSwitch>
@@ -413,6 +414,7 @@ const overridedDeviceKind = computed(defaultStore.makeGetterSetter('overridedDev
 const serverDisconnectedBehavior = computed(defaultStore.makeGetterSetter('serverDisconnectedBehavior'));
 const showNoteActionsOnlyHover = computed(defaultStore.makeGetterSetter('showNoteActionsOnlyHover'));
 const showFavoriteButtonInNoteFooter = computed(defaultStore.makeGetterSetter('showFavoriteButtonInNoteFooter'));
+const showHeartReactionButtonInNoteFooter = computed(defaultStore.makeGetterSetter('showHeartReactionButtonInNoteFooter'));
 const showClipButtonInNoteFooter = computed(defaultStore.makeGetterSetter('showClipButtonInNoteFooter'));
 const reactionsDisplaySize = computed(defaultStore.makeGetterSetter('reactionsDisplaySize'));
 const limitWidthOfReaction = computed(defaultStore.makeGetterSetter('limitWidthOfReaction'));

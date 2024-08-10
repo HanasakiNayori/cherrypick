@@ -159,11 +159,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<button v-if="canRenote && defaultStore.state.renoteQuoteButtonSeparation" ref="quoteButton" v-vibrate="defaultStore.state.vibrateSystem ? 5 : []" v-tooltip="i18n.ts.quote" class="_button" :class="$style.footerButton" @click.stop="quote()">
 					<i class="ti ti-quote"></i>
 				</button>
-				<!--
-				<button v-if="appearNote.reactionAcceptance !== 'likeOnly' && appearNote.myReaction == null" ref="heartReactButton" v-vibrate="defaultStore.state.vibrateSystem ? [30, 50, 50] : []" v-tooltip="i18n.ts.like" :class="$style.footerButton" class="_button" @click.stop="heartReact()">
+				<button v-if="defaultStore.state.showHeartReactionButtonInNoteFooter && appearNote.reactionAcceptance !== 'likeOnly' && appearNote.myReaction == null" ref="heartReactButton" v-vibrate="defaultStore.state.vibrateSystem ? [30, 50, 50] : []" v-tooltip="i18n.ts.like" :class="$style.footerButton" class="_button" @click.stop="heartReact()">
 					<i class="ti ti-heart"></i>
 				</button>
-				-->
 				<button ref="reactButton" v-vibrate="defaultStore.state.vibrateSystem ? [30, 50, 50] : []" :class="$style.footerButton" class="_button" @click.stop="toggleReact()">
 					<i v-if="appearNote.reactionAcceptance === 'likeOnly' && appearNote.myReaction != null" class="ti ti-heart-filled" style="color: var(--eventReactionHeart);"></i>
 					<i v-else-if="appearNote.myReaction != null" class="ti ti-mood-edit" style="color: var(--accent);"></i>

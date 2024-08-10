@@ -380,6 +380,10 @@ export const defaultStore = markRaw(new Storage('base', {
 		where: 'device',
 		default: false,
 	},
+	showHeartReactionButtonInNoteFooter: {
+		where: 'device',
+		default: false,
+	},
 	reactionsDisplaySize: {
 		where: 'device',
 		default: 'small' as 'small' | 'medium' | 'large',
