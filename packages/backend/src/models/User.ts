@@ -36,6 +36,7 @@ export class MiUser {
 	})
 	public hideOnlineStatus: boolean;
 
+	@Index()
 	@Column('varchar', {
 		length: 128,
 		comment: 'The username of the User.',

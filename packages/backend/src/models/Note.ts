@@ -74,6 +74,7 @@ export class MiNote {
 	public hasEvent: boolean;
 
 	// TODO: varcharにしたい
+	@Index()
 	@Column('text', {
 		nullable: true,
 	})
@@ -84,6 +85,7 @@ export class MiNote {
 	})
 	public name: string | null;
 
+	@Index()
 	@Column('varchar', {
 		length: 512, nullable: true,
 	})
