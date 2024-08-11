@@ -1051,6 +1051,14 @@ export interface Locale extends ILocale {
      */
     "flagAsCatDescription": string;
     /**
+     * こゃーん
+     */
+    "flagAsFox": string;
+    /**
+     * こゃこゃ
+     */
+    "flagAsFoxDescription": string;
+    /**
      * タイムラインにノートへの返信を表示する
      */
     "flagShowTimelineReplies": string;
@@ -7640,6 +7648,10 @@ export interface Locale extends ILocale {
              * botユーザー
              */
             "isBot": string;
+            /**
+             * 狐ユーザー
+             */
+            "isFox": string;
             /**
              * サスペンド済みユーザー
              */

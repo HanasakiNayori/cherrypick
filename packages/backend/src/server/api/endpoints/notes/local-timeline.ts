@@ -54,6 +54,7 @@ export const paramDef = {
 		withRenotes: { type: 'boolean', default: true },
 		withReplies: { type: 'boolean', default: false },
 		withCats: { type: 'boolean', default: false },
+		withFoxes: { type: 'boolean', default: false },
 		limit: { type: 'integer', minimum: 1, maximum: 100, default: 10 },
 		sinceId: { type: 'string', format: 'misskey:id' },
 		untilId: { type: 'string', format: 'misskey:id' },
@@ -100,6 +101,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					withFiles: ps.withFiles,
 					withReplies: ps.withReplies,
 					withCats: ps.withCats,
+					withFoxes: ps.withFoxes,
 				}, me);
 
 				process.nextTick(() => {
@@ -126,6 +128,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				alwaysIncludeMyNotes: true,
 				excludePureRenotes: !ps.withRenotes,
 				withCats: ps.withCats,
+				withFoxes: ps.withFoxes,
 				dbFallback: async (untilId, sinceId, limit) => await this.getFromDb({
 					untilId,
 					sinceId,
@@ -133,6 +136,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					withFiles: ps.withFiles,
 					withReplies: ps.withReplies,
 					withCats: ps.withCats,
+					withFoxes: ps.withFoxes,
 				}, me),
 			});
 
@@ -153,6 +157,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		withFiles: boolean,
 		withReplies: boolean,
 		withCats: boolean,
+		withFoxes: boolean,
 	}, me: MiLocalUser | null) {
 		const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'),
 			ps.sinceId, ps.untilId)

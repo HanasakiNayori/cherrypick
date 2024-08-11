@@ -61,6 +61,7 @@ export const paramDef = {
 		allowPartial: { type: 'boolean', default: false }, // true is recommended but for compatibility false by default
 		withFiles: { type: 'boolean', default: false },
 		withCats: { type: 'boolean', default: false },
+		withFoxes: { type: 'boolean', default: false },
 	},
 	required: ['userId'],
 } as const;
@@ -105,6 +106,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					withFiles: ps.withFiles,
 					withRenotes: ps.withRenotes,
 					withCats: ps.withCats,
+					withFoxes: ps.withFoxes,
 				}, me);
 
 				return await this.noteEntityService.packMany(timeline, me);
@@ -130,6 +132,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				excludeNoFiles: ps.withChannelNotes && ps.withFiles, // userTimelineWithChannel may include notes without files
 				excludePureRenotes: !ps.withRenotes,
 				withCats: ps.withCats,
+				withFoxes: ps.withFoxes,
 				noteFilter: note => {
 					if (note.channel?.isSensitive && !isSelf) return false;
 					if (note.visibility === 'specified' && (!me || (me.id !== note.userId && !note.visibleUserIds.some(v => v === me.id)))) return false;
@@ -146,6 +149,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					withFiles: ps.withFiles,
 					withRenotes: ps.withRenotes,
 					withCats: ps.withCats,
+					withFoxes: ps.withFoxes,
 				}, me),
 			});
 
@@ -161,6 +165,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		withChannelNotes: boolean,
 		withFiles: boolean,
 		withCats: boolean,
+		withFoxes: boolean,
 		withRenotes: boolean,
 	}, me: MiLocalUser | null) {
 		const isSelf = me && (me.id === ps.userId);
@@ -205,6 +210,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 		if (ps.withCats) {
 			query.andWhere('(select "isCat" from "user" where id = note."userId")');
+		}
+
+		if (ps.withFoxes) {
+			query.andWhere('(select "isFox" from "user" where id = note."userId")');
 		}
 
 		return await query.limit(ps.limit).getMany();

@@ -556,6 +556,7 @@ const extension_context_definition = {
 	'_misskey_summary': 'misskey:_misskey_summary',
 	'_misskey_talk': 'misskey:_misskey_talk',
 	'isCat': 'misskey:isCat',
+	'isFox': 'misskey:isFox',
 	// vcard
 	vcard: 'http://www.w3.org/2006/vcard/ns#',
 } satisfies Context;

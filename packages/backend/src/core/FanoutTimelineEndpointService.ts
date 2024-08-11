@@ -34,6 +34,7 @@ type TimelineOptions = {
 	excludeReplies?: boolean;
 	excludePureRenotes: boolean;
 	withCats: boolean;
+	withFoxes: boolean;
 	dbFallback: (untilId: string | null, sinceId: string | null, limit: number) => Promise<MiNote[]>,
 };
 
@@ -98,6 +99,11 @@ export class FanoutTimelineEndpointService {
 			if (ps.withCats) {
 				const parentFilter = filter;
 				filter = (note) => (note.user ? note.user.isCat : false) && parentFilter(note);
+			}
+
+			if (ps.withFoxes) {
+				const parentFilter = filter;
+				filter = (note) => (note.user ? note.user.isFox : false) && parentFilter(note);
 			}
 
 			if (ps.me) {

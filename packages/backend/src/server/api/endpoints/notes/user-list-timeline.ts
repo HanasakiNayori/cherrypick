@@ -63,6 +63,7 @@ export const paramDef = {
 			description: 'Only show notes that have attached files.',
 		},
 		withCats: { type: 'boolean', default: false },
+		withFoxes: { type: 'boolean', default: false },
 	},
 	required: ['listId'],
 } as const;
@@ -113,6 +114,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					withFiles: ps.withFiles,
 					withRenotes: ps.withRenotes,
 					withCats: ps.withCats,
+					withFoxes: ps.withFoxes,
 				}, me);
 
 				this.activeUsersChart.read(me);
@@ -131,6 +133,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 				alwaysIncludeMyNotes: true,
 				excludePureRenotes: !ps.withRenotes,
 				withCats: ps.withCats,
+				withFoxes: ps.withFoxes,
 				dbFallback: async (untilId, sinceId, limit) => await this.getFromDb(list, {
 					untilId,
 					sinceId,
@@ -141,6 +144,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					withFiles: ps.withFiles,
 					withRenotes: ps.withRenotes,
 					withCats: ps.withCats,
+					withFoxes: ps.withFoxes,
 				}, me),
 			});
 
@@ -160,6 +164,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		withFiles: boolean,
 		withRenotes: boolean,
         withCats: boolean,
+		withFoxes: boolean,
 	}, me: MiLocalUser) {
 		//#region Construct query
 		const query = this.queryService.makePaginationQuery(this.notesRepository.createQueryBuilder('note'), ps.sinceId, ps.untilId)
@@ -242,6 +247,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 
 		if (ps.withCats) {
 			query.andWhere('(select "isCat" from "user" where id = note."userId")');
+		}
+
+		if (ps.withFoxes) {
+			query.andWhere('(select "isFox" from "user" where id = note."userId")');
 		}
 		//#endregion
 
