@@ -10,7 +10,7 @@ export function isFollowingVisibleForMe(user: Misskey.entities.UserDetailed): bo
 	if ($i && $i.id === user.id) return true;
 
 	if (user.followingVisibility === 'private') return false;
-	if (user.followingVisibility === 'followers' && user.isFollowing) return true;
+	if (user.followingVisibility === 'followers' && !user.isFollowing) return false;
 
 	return true;
 }
@@ -18,7 +18,7 @@ export function isFollowersVisibleForMe(user: Misskey.entities.UserDetailed): bo
 	if ($i && $i.id === user.id) return true;
 
 	if (user.followersVisibility === 'private') return false;
-	if (user.followersVisibility === 'followers' && user.isFollowing) return true;
+	if (user.followersVisibility === 'followers' && !user.isFollowing) return false;
 
 	return true;
 }
