@@ -26,9 +26,11 @@ const routes: RouteDef[] = [{
 }, {
 	path: '/@:acct/following',
 	component: page(() => import('@/pages/user/following.vue')),
+	loginRequired: true,
 }, {
 	path: '/@:acct/followers',
 	component: page(() => import('@/pages/user/followers.vue')),
+	loginRequired: true,
 }, {
 	name: 'user',
 	path: '/@:acct/:page?',
@@ -37,6 +39,7 @@ const routes: RouteDef[] = [{
 	name: 'note',
 	path: '/notes/:noteId/:initialTab?',
 	component: page(() => import('@/pages/note.vue')),
+	loginRequired: true,
 }, {
 	name: 'list',
 	path: '/list/:listId',
