@@ -99,7 +99,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private perUserPvChart: PerUserPvChart,
 		private apiLoggerService: ApiLoggerService,
 
-		@Inject(DI.metasRepository)
 		private metaService: MetaService, // MetaServiceのインジェクション
 	) {
 		super(meta, paramDef, async (ps, me, _1, _2, _3, _4, ip) => {
@@ -138,7 +137,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 					if (instance.blockedHosts.includes(ps.host)) {
 						throw new ApiError(meta.errors.hostBlocked);
 					}
-					
+
 					user = await this.remoteUserResolveService.resolveUser(ps.username, ps.host).catch(err => {
 						this.apiLoggerService.logger.warn(`failed to resolve remote user: ${err}`);
 						throw new ApiError(meta.errors.failedToResolveRemoteUser);
