@@ -10,7 +10,8 @@ export function isFollowingVisibleForMe(user: Misskey.entities.UserDetailed): bo
 	if ($i && $i.id === user.id) return true;
 
 	if (user.followingVisibility === 'private') return false;
-	if (user.followingVisibility === 'followers' && !user.isFollowing && (user.host != null || user.host == null)) return false;
+	if (user.followingVisibility === 'followers' && !user.isFollowing && user.host == null) return false; //ローカルユーザーの場合
+	if (user.followingVisibility === 'followers' && !user.isFollowing && user.host != null) return false; //リモートユーザーの場合
 
 	return true;
 }
@@ -18,7 +19,7 @@ export function isFollowersVisibleForMe(user: Misskey.entities.UserDetailed): bo
 	if ($i && $i.id === user.id) return true;
 
 	if (user.followersVisibility === 'private') return false;
-	if (user.followersVisibility === 'followers' && !user.isFollowing && (user.host != null || user.host == null)) return false;
-
+	if (user.followersVisibility === 'followers' && !user.isFollowing && user.host == null) return false; //ローカルユーザーの場合
+	if (user.followersVisibility === 'followers' && !user.isFollowing && user.host != null) return false; //リモートユーザーの場合
 	return true;
 }
