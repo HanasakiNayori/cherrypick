@@ -10,6 +10,7 @@ import type { MiUser } from '@/models/User.js';
 import { Endpoint } from '@/server/api/endpoint-base.js';
 import { UserEntityService } from '@/core/entities/UserEntityService.js';
 import { RemoteUserResolveService } from '@/core/RemoteUserResolveService.js';
+import { MetaService } from '@/core/MetaService.js';
 import { DI } from '@/di-symbols.js';
 import PerUserPvChart from '@/core/chart/charts/per-user-pv.js';
 import { RoleService } from '@/core/RoleService.js';
@@ -18,7 +19,7 @@ import { ApiLoggerService } from '../../ApiLoggerService.js';
 import type { FindOptionsWhere } from 'typeorm';
 
 export const meta = {
-	tags: ['users'],
+	tags: ['users', 'meta'],
 
 	requireCredential: true,
 
@@ -55,6 +56,13 @@ export const meta = {
 			id: '4362f8dc-731f-4ad8-a694-be5a88922a24',
 			httpStatusCode: 404,
 		},
+
+		hostBlocked: {
+			message: 'This host blocked.',
+			code: 'HOST_BLOCKED',
+			id: '7c4a1f7b-8f3d-4f8b-bd8c-3a82c93e91f7',
+			httpStatusCode: 403,
+		}
 	},
 } as const;
 
@@ -80,7 +88,7 @@ export const paramDef = {
 } as const;
 
 @Injectable()
-export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-disable-line import/no-default-export
+export default class extends Endpoint<typeof meta, typeof paramDef> {
 	constructor(
 		@Inject(DI.usersRepository)
 		private usersRepository: UsersRepository,
@@ -90,6 +98,9 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 		private roleService: RoleService,
 		private perUserPvChart: PerUserPvChart,
 		private apiLoggerService: ApiLoggerService,
+
+		@Inject(DI.metasRepository)
+		private metaService: MetaService, // MetaServiceのインジェクション
 	) {
 		super(meta, paramDef, async (ps, me, _1, _2, _3, _4, ip) => {
 			let user;
@@ -123,6 +134,11 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 			} else {
 				// Lookup user
 				if (typeof ps.host === 'string' && typeof ps.username === 'string') {
+					const instance = await this.metaService.fetch(true);
+					if (instance.blockedHosts.includes(ps.host)) {
+						throw new ApiError(meta.errors.hostBlocked);
+					}
+					
 					user = await this.remoteUserResolveService.resolveUser(ps.username, ps.host).catch(err => {
 						this.apiLoggerService.logger.warn(`failed to resolve remote user: ${err}`);
 						throw new ApiError(meta.errors.failedToResolveRemoteUser);
