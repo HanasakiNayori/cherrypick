@@ -110,6 +110,15 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 						});
 						if (!isFollowing) {
 							throw new ApiError(meta.errors.forbidden);
+											} else if (me.id !== user.id) {
+						const isFollowing = await this.followingsRepository.exists({
+							where: {
+								followeeId: user.id,
+								followerId: me.id,
+							},
+						});
+						if (!isFollowing) {
+							throw new ApiError(meta.errors.forbidden);
 						} else if (me.id !== user.id) {
 							const isFollowing = await this.followingsRepository.exists({
 								where: {
@@ -124,7 +133,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 					}
 				}
 			}
-			
+
 			const query = this.queryService.makePaginationQuery(this.followingsRepository.createQueryBuilder('following'), ps.sinceId, ps.untilId)
 				.andWhere('following.followeeId = :userId', { userId: user.id })
 				.innerJoinAndSelect('following.follower', 'follower');
