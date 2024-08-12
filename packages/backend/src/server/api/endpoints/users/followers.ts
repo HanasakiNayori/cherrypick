@@ -123,7 +123,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> { // eslint-
 						}
 					}
 				}
-
+			}
+			
 			const query = this.queryService.makePaginationQuery(this.followingsRepository.createQueryBuilder('following'), ps.sinceId, ps.untilId)
 				.andWhere('following.followeeId = :userId', { userId: user.id })
 				.innerJoinAndSelect('following.follower', 'follower');
